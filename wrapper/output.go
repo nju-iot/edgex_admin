@@ -39,5 +39,5 @@ func (s *JsonOutput) GetRespRawData() []byte {
 func (s *JsonOutput) Write() {
 	s.context.Writer.WriteHeader(s.HttpStatus)
 	s.context.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
-	s.context.Writer.Write(s.GetRespRawData())
+	_, _ = s.context.Writer.Write(s.GetRespRawData())
 }
