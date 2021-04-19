@@ -5,10 +5,6 @@ import (
 	"github.com/nju-iot/edgex_admin/logs"
 )
 
-const (
-	TABLE_EDGEX_SERVICE_ITEM = "edgex_service_item"
-)
-
 // EdgexServiceItem ...
 type EdgexServiceItem struct {
 	Id           int64  `gorm:"column:id" json:"id"`
@@ -24,25 +20,7 @@ type EdgexServiceItem struct {
 	Extra        string `gorm:"column:extra" json:"extra"`
 }
 
-// test
-// func InsertTest() error {
-// 	item := map[string]interface{}{
-// 		"user_id":     123456789,
-// 		"edgex_name":  "edgex_1",
-// 		"prefix":      "edgex_1",
-// 		"description": "测试数据库联通",
-// 		"status":      1,
-// 		"deleted":     0,
-// 		"location":    `{"province":"江苏", "city":"南京市", "longitude":"123", "latitude":"123"}`,
-// 	}
-// 	dbRes := caller.EdgexDB.Debug().Model(&EdgexServiceItem{}).Create(item)
-// 	if dbRes.Error != nil {
-// 		logs.Error("[InsertTest] db create row false: err=%v", dbRes.Error)
-// 		return dbRes.Error
-// 	}
-// 	return nil
-// }
-
+// GetAllEdgex [test]
 func GetAllEdgex() (edgexList []*EdgexServiceItem, err error) {
 	edgexList = make([]*EdgexServiceItem, 0)
 	dbRes := caller.EdgexDB.Debug().

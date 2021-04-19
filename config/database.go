@@ -22,7 +22,7 @@ func GetDefaultDBOptional() *DBOptional {
 		DBPort:       MysqlSetting.DBPort,
 		DBName:       MysqlSetting.DBName,
 		DBCharset:    "utf8",
-		Timeout:      "100ms",
+		Timeout:      "1000ms",
 		ReadTimeout:  "2.0s",
 		WriteTimeout: "5.0s",
 	}

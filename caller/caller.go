@@ -34,7 +34,7 @@ func initMysqlClient() {
 	optional := config.GetDefaultDBOptional()
 
 	format := "%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local&timeout=%s&readTimeout=%s&writeTimeout=%s"
-	dbconfig := fmt.Sprintf(format, optional.User, optional.Password, optional.DBHostname, optional.DBPort,
+	dbConfig := fmt.Sprintf(format, optional.User, optional.Password, optional.DBHostname, optional.DBPort,
 		optional.DBName, optional.DBCharset, optional.Timeout, optional.ReadTimeout, optional.WriteTimeout)
 
 	gormConfig := gorm.Config{
@@ -46,7 +46,7 @@ func initMysqlClient() {
 	var err error
 	EdgexDB, err = gorm.Open(mysql.New(mysql.Config{
 		DriverName: "mysql",
-		DSN:        dbconfig,
+		DSN:        dbConfig,
 	}), &gormConfig)
 
 	if err != nil {

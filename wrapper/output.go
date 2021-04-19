@@ -29,7 +29,7 @@ func SampleJson(c *gin.Context, p resp.ErrorCode, data interface{}) *JsonOutput 
 
 func (s *JsonOutput) GetRespRawData() []byte {
 	vi := reflect.ValueOf(s.Resp)
-	if vi.Kind() == reflect.Ptr {
+	if vi.Kind() == reflect.Ptr && vi.IsNil() {
 		return []byte("")
 	}
 	rawData, _ := json.Marshal(s.Resp)
@@ -37,6 +37,7 @@ func (s *JsonOutput) GetRespRawData() []byte {
 }
 
 func (s *JsonOutput) Write() {
-	s.context.Writer.Header().Add("Content-Type", "application/json; charset=utf-8")
-	s.context.Writer.Write(s.GetRespRawData())
+	s.context.Writer.WriteHeader(s.HttpStatus)
+	s.context.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+	_, _ = s.context.Writer.Write(s.GetRespRawData())
 }

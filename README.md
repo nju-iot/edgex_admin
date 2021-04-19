@@ -8,5 +8,3 @@ go1.15
 
 #### Redis 配置验证
 ```redis-cli -h 127.0.0.1 -p 6379```
-
-```config set requirepass edgex_go```
