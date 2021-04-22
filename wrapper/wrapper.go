@@ -13,7 +13,8 @@ import (
 	"github.com/nju-iot/edgex_admin/resp"
 )
 
-func JsonOutPutWrapper(f func(*gin.Context) *JsonOutput) func(c *gin.Context) {
+// JsonOutPutWrapper ...
+func JsonOutPutWrapper(call func(*gin.Context) *JsonOutput) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var output *JsonOutput
 
@@ -44,11 +45,11 @@ func JsonOutPutWrapper(f func(*gin.Context) *JsonOutput) func(c *gin.Context) {
 			logs.Info("[wraper-response] useTime=%d, status=%d, resp=%s",
 				userTime, output.HttpStatus, GetMarshalStr(output.Resp))
 		}()
-
-		output = f(c)
+		output = call(c)
 	}
 }
 
+// GetMarshalStr ...
 func GetMarshalStr(obj interface{}) string {
 	vi := reflect.ValueOf(obj)
 	if vi.Kind() == reflect.Ptr && vi.IsNil() {

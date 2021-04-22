@@ -3,34 +3,43 @@ package config
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/go-ini/ini"
 )
 
-var (
-	ServerSetting = serverSetting{}
-	LogSetting    = logSetting{}
-	MysqlSetting  = mysqlSetting{}
-	MongoSetting  = mongoSetting{}
-	RedisSetting  = redisSetting{}
+const (
+	appINIFilePath = "config/app.ini"
 )
 
-type serverSetting struct {
+var (
+	Server    *Service
+	DBConf    *Database
+	RedisConf *RedisConfig
+	LogConf   *LogConfig
+)
+
+type LogConfig struct {
+	LogLevel   string
+	FileName   string
+	MaxSize    int
+	MaxBackups int
+	MaxAge     int
+	Compress   bool
+}
+type RedisConfig struct {
+	Address  string
+	Password string
+	DB       int
+}
+
+type Service struct {
 	RunMode  string
 	HttpPort int
 	Port     string
 }
 
-type logSetting struct {
-	LogLevel   string
-	FileName   string // 日志文件名
-	MaxSize    int    // 每个日志文件保存的最大尺寸 单位：M
-	MaxBackups int    // 日志文件最多保存多少个备份
-	MaxAge     int    // 文件最多保存多少天
-	Compress   bool   // 日志是否压缩
-}
-
-type mysqlSetting struct {
+type Database struct {
 	DriverName string
 	User       string
 	Password   string
@@ -39,30 +48,26 @@ type mysqlSetting struct {
 	DBName     string
 }
 
-type mongoSetting struct {
-}
-
-type redisSetting struct {
-	Address  string
-	Password string
-	DB       int
-}
-
-func InitConfig() {
-
-	cfg, err := ini.Load("/Users/bytedance/go/src/github.com/nju-iot/edgex_admin/app.ini")
+func LoadConfig() {
+	absPath, err := filepath.Abs(appINIFilePath)
 	if err != nil {
 		panic(err)
 	}
+	cfg, err := ini.Load(absPath)
+	if err != nil {
+		panic(err)
+	}
+	LogConf = new(LogConfig)
+	DBConf = new(Database)
+	RedisConf = new(RedisConfig)
+	Server = new(Service)
+	mapTo("Log", LogConf, cfg)
+	mapTo("Database", DBConf, cfg)
+	mapTo("Redis", RedisConf, cfg)
+	mapTo("Server", Server, cfg)
 
-	mapTo("Log", &LogSetting, cfg)
-	mapTo("Mongo", &MongoSetting, cfg)
-	mapTo("Mysql", &MysqlSetting, cfg)
-	mapTo("Redis", &RedisSetting, cfg)
-	mapTo("Server", &ServerSetting, cfg)
-
-	if ServerSetting.HttpPort != 0 {
-		ServerSetting.Port = fmt.Sprintf(":%d", ServerSetting.HttpPort)
+	if Server.HttpPort != 0 {
+		Server.Port = fmt.Sprintf(":%d", Server.HttpPort)
 	}
 }
 

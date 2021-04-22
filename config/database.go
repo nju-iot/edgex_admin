@@ -15,12 +15,12 @@ type DBOptional struct {
 
 func GetDefaultDBOptional() *DBOptional {
 	return &DBOptional{
-		DriverName:   MysqlSetting.DriverName,
-		User:         MysqlSetting.User,
-		Password:     MysqlSetting.Password,
-		DBHostname:   MysqlSetting.DBHostname,
-		DBPort:       MysqlSetting.DBPort,
-		DBName:       MysqlSetting.DBName,
+		DriverName:   DBConf.DriverName,
+		User:         DBConf.User,
+		Password:     DBConf.Password,
+		DBHostname:   DBConf.DBHostname,
+		DBPort:       DBConf.DBPort,
+		DBName:       DBConf.DBName,
 		DBCharset:    "utf8",
 		Timeout:      "1000ms",
 		ReadTimeout:  "2.0s",
