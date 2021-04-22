@@ -3,10 +3,12 @@ module github.com/nju-iot/edgex_admin
 go 1.15
 
 require (
+	github.com/elazarl/goproxy v0.0.0-20210110162100-a92cc753f88e // indirect
 	github.com/gin-contrib/zap v0.0.1
 	github.com/gin-gonic/gin v1.7.1
 	github.com/go-ini/ini v1.62.0
-	github.com/go-redis/redis/v8 v8.8.0
+	github.com/go-redis/redis/v8 v8.8.2
+	github.com/jasonlvhit/gocron v0.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/parnurzeal/gorequest v0.2.16
 	go.uber.org/zap v1.16.0

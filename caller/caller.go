@@ -22,9 +22,9 @@ func InitClient() {
 
 func initRedisClient() {
 	redisOpt := &redis.Options{
-		Addr:     config.RedisSetting.Address,
-		Password: config.RedisSetting.Password,
-		DB:       config.RedisSetting.DB,
+		Addr:     config.RedisConf.Address,
+		Password: config.RedisConf.Password,
+		DB:       config.RedisConf.DB,
 	}
 	RedisClient = redis.NewClient(redisOpt)
 }
@@ -45,7 +45,7 @@ func initMysqlClient() {
 
 	var err error
 	EdgexDB, err = gorm.Open(mysql.New(mysql.Config{
-		DriverName: "mysql",
+		DriverName: optional.DriverName,
 		DSN:        dbConfig,
 	}), &gormConfig)
 
