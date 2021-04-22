@@ -44,13 +44,13 @@ func (h *relationEdgexHandler) CheckParams() error {
 
 // Follow ...
 func (h *relationEdgexHandler) Follow() (err error) {
-	if h.RelatedEntity != nil && h.RelatedEntity.Status == dal.Status_Follow {
+	if h.RelatedEntity != nil && h.RelatedEntity.Status == dal.StatusFollow {
 		logs.Warn("[relationEdgexHandler-Follow] user followed: user_id=%v, edgex_id=%v", h.Params.UserID, h.Params.EdgexID)
 		return
 	}
 	// Exist
 	if h.RelatedEntity != nil {
-		filedsMap := map[string]interface{}{"status": dal.Status_Follow}
+		filedsMap := map[string]interface{}{"status": dal.StatusFollow}
 		err = dal.UpdateEdgexRelatedUser(caller.EdgexDB, h.RelatedEntity.ID, filedsMap)
 		if err != nil {
 			logs.Error("[relationEdgexHandler-Follow] update follow status failed: filedsMap=%+v, err=%v", filedsMap, err)
@@ -65,7 +65,7 @@ func (h *relationEdgexHandler) Follow() (err error) {
 		Username:     h.Params.Username,
 		EdgexID:      h.Params.EdgexID,
 		EdgexName:    h.Params.EdgexName,
-		Status:       dal.Status_Follow,
+		Status:       dal.StatusFollow,
 		CreatedTime:  time.Now(),
 		ModifiedTime: time.Now(),
 	}
@@ -79,11 +79,11 @@ func (h *relationEdgexHandler) Follow() (err error) {
 
 // UnFollow
 func (h *relationEdgexHandler) UnFollow() (err error) {
-	if h.RelatedEntity.Status == dal.Status_UnFollow {
+	if h.RelatedEntity.Status == dal.StatusUnFollow {
 		logs.Warn("[relationEdgexHandler-UnFollow] user unfollowed: user_id=%v, edgex_id=%v", h.Params.UserID, h.Params.EdgexID)
 		return
 	}
-	filedsMap := map[string]interface{}{"status": dal.Status_UnFollow}
+	filedsMap := map[string]interface{}{"status": dal.StatusUnFollow}
 	err = dal.UpdateEdgexRelatedUser(caller.EdgexDB, h.RelatedEntity.ID, filedsMap)
 	if err != nil {
 		logs.Error("[relationEdgexHandler-UnFollow] unfollow failed: err=%v", err)
@@ -93,7 +93,7 @@ func (h *relationEdgexHandler) UnFollow() (err error) {
 }
 
 // FollowEdgex ...
-func FollowEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
+func FollowEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 
 	h := buildRelationEdgexHandler(c)
 
@@ -101,28 +101,28 @@ func FollowEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Error("[FollowEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_PARAMS_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. 获取Follow记录
 	h.RelatedEntity, err = dal.FindEdgexRelatedUserByUserIDAndEdgexID(h.Params.EdgexID, h.Params.UserID)
 	if err != nil {
 		logs.Error("[FollowEdgex] find edgexRelatedUser failed: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
 	// Step3. Follow
 	err = h.Follow()
 	if err != nil {
 		logs.Error("[FollowEdgex] Follow failed: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJson(c, resp.RESP_CODE_SUCCESS, "已关注")
+	return wrapper.SampleJSON(c, resp.RespCodeSuccess, "已关注")
 }
 
 // UnFollowEdgex ...
-func UnFollowEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
+func UnFollowEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 
 	h := buildRelationEdgexHandler(c)
 
@@ -130,26 +130,26 @@ func UnFollowEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Error("[UnFollowEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_PARAMS_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. 获取Follow记录
 	h.RelatedEntity, err = dal.FindEdgexRelatedUserByUserIDAndEdgexID(h.Params.EdgexID, h.Params.UserID)
 	if err != nil {
 		logs.Error("[UnFollowEdgex] find edgexRelatedUser failed: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 	if h.RelatedEntity == nil {
 		logs.Error("[UnFollowEdgex] UnFollow failed: don't have follow record: edgex_id=%v, user_id=%v",
 			h.Params.EdgexID, h.Params.UserID)
-		return wrapper.SampleJson(c, resp.RESP_CODE_PARAMS_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step3. UnFollow
 	err = h.UnFollow()
 	if err != nil {
 		logs.Error("[UnFollowEdgex] UnFollow failed: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
-	return wrapper.SampleJson(c, resp.RESP_CODE_SUCCESS, "已取消关注")
+	return wrapper.SampleJSON(c, resp.RespCodeSuccess, "已取消关注")
 }

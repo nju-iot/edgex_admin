@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	Status_Follow   = 1
-	Status_UnFollow = 2
+	StatusFollow   = 1 // StatusFollow
+	StatusUnFollow = 2 // StatusUnFollow
 )
 
 type EdgexRelatedUser struct {

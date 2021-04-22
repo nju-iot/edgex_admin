@@ -82,7 +82,7 @@ func updateEdgexStatus() {
 				var filedsMap = map[string]interface{}{"status": statusMap[edgex.ID]}
 				updateErr = dal.UpdateEdgex(db, edgex.ID, filedsMap)
 				if updateErr != nil {
-					logs.Error("[updateEdgexStatus] update edgex status failed: edgex_id=%v, status=%v, err=%v", edgex.ID, statusMap[edgex.ID])
+					logs.Error("[updateEdgexStatus] update edgex status failed: edgex_id=%v, status=%v, err=%v", edgex.ID, statusMap[edgex.ID], err)
 					return updateErr
 				}
 			}

@@ -3,12 +3,12 @@ package resp
 type ErrorCode int32
 
 const (
-	RESP_CODE_SUCCESS         ErrorCode = 0
-	RESP_CODE_PARAMS_ERROR    ErrorCode = 4001
-	RESP_CODE_SEVER_EXCEPTION ErrorCode = 5000
-	RESP_CODE_DB_ERROR        ErrorCode = 5001
-	RESP_CODE_REDIS_ERROR     ErrorCode = 5002
-	RESP_CODE_RPC_ERROR       ErrorCode = 5003
+	RespCodeSuccess         ErrorCode = 0
+	RespCodeParamsError     ErrorCode = 4001
+	RespCodeServerException ErrorCode = 5000
+	RespDatabaseError       ErrorCode = 5001
+	RespCodeRedisError      ErrorCode = 5002
+	RespCodeRPCError        ErrorCode = 5003
 )
 
 type IErrorCode interface {
@@ -19,12 +19,12 @@ type IErrorCode interface {
 
 func (p ErrorCode) Prompts() string {
 	switch p {
-	case RESP_CODE_SUCCESS:
+	case RespCodeSuccess:
 		return ""
-	case RESP_CODE_PARAMS_ERROR:
+	case RespCodeParamsError:
 		return "请求参数错误"
-	case RESP_CODE_SEVER_EXCEPTION, RESP_CODE_DB_ERROR,
-		RESP_CODE_REDIS_ERROR, RESP_CODE_RPC_ERROR:
+	case RespCodeServerException, RespDatabaseError,
+		RespCodeRedisError, RespCodeRPCError:
 		return "服务器内部错误，请稍后重试"
 	}
 	return "unkown error"
@@ -32,12 +32,12 @@ func (p ErrorCode) Prompts() string {
 
 func (p ErrorCode) Message() string {
 	switch p {
-	case RESP_CODE_SUCCESS:
+	case RespCodeSuccess:
 		return "success"
-	case RESP_CODE_PARAMS_ERROR:
+	case RespCodeParamsError:
 		return "params error"
-	case RESP_CODE_SEVER_EXCEPTION, RESP_CODE_DB_ERROR,
-		RESP_CODE_REDIS_ERROR, RESP_CODE_RPC_ERROR:
+	case RespCodeServerException, RespDatabaseError,
+		RespCodeRedisError, RespCodeRPCError:
 		return "server exception"
 	}
 	return "unkown error"

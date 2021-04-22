@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	Action_All    = "all"
-	Action_Me     = "me"
-	Action_Follow = "follow"
+	ActionAll    = "all"    // 全部
+	ActionMe     = "me"     // 我的创建
+	ActionFollow = "follow" // 我的关注
 )
 
 // SearchEdgexParams ...
@@ -44,7 +44,7 @@ func buildSearchEdgexHandler(c *gin.Context) *searchEdgexHandler {
 }
 
 // SearchEdgex ...
-func SearchEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
+func SearchEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 
 	h := buildSearchEdgexHandler(c)
 
@@ -52,17 +52,17 @@ func SearchEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Error("[SearchEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_PARAMS_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. search
 	err = h.Process()
 	if err != nil {
 		logs.Error("[SearchEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJson(c, resp.RESP_CODE_SUCCESS, h.EdgexList)
+	return wrapper.SampleJSON(c, resp.RespCodeSuccess, h.EdgexList)
 }
 
 func (h *searchEdgexHandler) CheckParams() error {
@@ -74,14 +74,14 @@ func (h *searchEdgexHandler) CheckParams() error {
 	}
 
 	if h.Params.Action == "" {
-		h.Params.Action = Action_All
+		h.Params.Action = ActionAll
 	}
 
-	if !utils.InStringSlice(h.Params.Action, []string{Action_All, Action_Me, Action_Follow}) {
+	if !utils.InStringSlice(h.Params.Action, []string{ActionAll, ActionMe, ActionFollow}) {
 		return fmt.Errorf("action is invalid: action=%s", h.Params.Action)
 	}
 
-	if (h.Params.Action == Action_Me || h.Params.Action == Action_Follow) && h.Params.UserID == 0 {
+	if (h.Params.Action == ActionMe || h.Params.Action == ActionFollow) && h.Params.UserID == 0 {
 		return fmt.Errorf("params error: action=%s but user_id=0", h.Params.Action)
 	}
 
@@ -100,9 +100,9 @@ func (h *searchEdgexHandler) Process() (err error) {
 	)
 
 	switch h.Params.Action {
-	case Action_Me:
+	case ActionMe:
 		userIDs = []int64{h.Params.UserID}
-	case Action_Follow:
+	case ActionFollow:
 		edgexIDs, err = dal.GetFollowEdgexIDs(h.Params.UserID)
 		if err != nil {
 			return
@@ -114,7 +114,7 @@ func (h *searchEdgexHandler) Process() (err error) {
 
 	// 指定edgex_id搜索
 	if edgexID, err := strconv.ParseInt(keyword, 10, 64); err == nil && edgexID > 0 {
-		if h.Params.Action == Action_Follow && !utils.InInt64Slice(edgexID, edgexIDs) {
+		if h.Params.Action == ActionFollow && !utils.InInt64Slice(edgexID, edgexIDs) {
 			return nil
 		}
 		edgexIDs = []int64{edgexID}

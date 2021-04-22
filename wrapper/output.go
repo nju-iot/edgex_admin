@@ -9,29 +9,29 @@ import (
 	"github.com/nju-iot/edgex_admin/resp"
 )
 
-// JsonOutput ...
-type JsonOutput struct {
+// JSONOutput ...
+type JSONOutput struct {
 	context    *gin.Context
-	HttpStatus int
+	HTTPStatus int
 	Resp       interface{}
 }
 
-// NewJsonOutput ...
-func NewJsonOutput(c *gin.Context, httpStatus int, rsp interface{}) *JsonOutput {
-	return &JsonOutput{
+// NewJSONOutput ...
+func NewJSONOutput(c *gin.Context, httpStatus int, rsp interface{}) *JSONOutput {
+	return &JSONOutput{
 		context:    c,
-		HttpStatus: httpStatus,
+		HTTPStatus: httpStatus,
 		Resp:       rsp,
 	}
 }
 
-// SampleJson ...
-func SampleJson(c *gin.Context, p resp.ErrorCode, data interface{}) *JsonOutput {
-	return NewJsonOutput(c, http.StatusOK, resp.NewStdResponse(p, data))
+// SampleJSON ...
+func SampleJSON(c *gin.Context, p resp.ErrorCode, data interface{}) *JSONOutput {
+	return NewJSONOutput(c, http.StatusOK, resp.NewStdResponse(p, data))
 }
 
 // GetRespRawData ...
-func (s *JsonOutput) GetRespRawData() []byte {
+func (s *JSONOutput) GetRespRawData() []byte {
 	vi := reflect.ValueOf(s.Resp)
 	if vi.Kind() == reflect.Ptr && vi.IsNil() {
 		return []byte("")
@@ -41,8 +41,8 @@ func (s *JsonOutput) GetRespRawData() []byte {
 }
 
 // Write ...
-func (s *JsonOutput) Write() {
-	s.context.Writer.WriteHeader(s.HttpStatus)
+func (s *JSONOutput) Write() {
+	s.context.Writer.WriteHeader(s.HTTPStatus)
 	s.context.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_, _ = s.context.Writer.Write(s.GetRespRawData())
 }

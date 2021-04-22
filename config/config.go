@@ -35,7 +35,7 @@ type RedisConfig struct {
 
 type Service struct {
 	RunMode  string
-	HttpPort int
+	HTTPPort int
 	Port     string
 }
 
@@ -66,8 +66,8 @@ func LoadConfig() {
 	mapTo("Redis", RedisConf, cfg)
 	mapTo("Server", Server, cfg)
 
-	if Server.HttpPort != 0 {
-		Server.Port = fmt.Sprintf(":%d", Server.HttpPort)
+	if Server.HTTPPort != 0 {
+		Server.Port = fmt.Sprintf(":%d", Server.HTTPPort)
 	}
 }
 

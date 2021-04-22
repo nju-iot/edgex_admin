@@ -35,7 +35,7 @@ func buildUpdateEdgexHandler(c *gin.Context) *updateEdgexHandler {
 }
 
 // UpdateEdgex ...
-func UpdateEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
+func UpdateEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 
 	h := buildUpdateEdgexHandler(c)
 
@@ -43,17 +43,17 @@ func UpdateEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Warn("[DeleteEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_PARAMS_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. update
 	err = h.Process()
 	if err != nil {
 		logs.Warn("[DeleteEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJson(c, resp.RESP_CODE_SUCCESS, nil)
+	return wrapper.SampleJSON(c, resp.RespCodeSuccess, nil)
 }
 
 func (h *updateEdgexHandler) CheckParams() error {

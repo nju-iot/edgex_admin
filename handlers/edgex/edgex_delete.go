@@ -28,7 +28,7 @@ func buildDeleteEdgexHandler(c *gin.Context) *deleteEdgexHandler {
 }
 
 // DeleteEdgex ...
-func DeleteEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
+func DeleteEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 
 	h := buildDeleteEdgexHandler(c)
 
@@ -36,17 +36,17 @@ func DeleteEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Warn("[DeleteEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_PARAMS_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. update deleted
 	err = h.Process()
 	if err != nil {
 		logs.Warn("[DeleteEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJson(c, resp.RESP_CODE_SUCCESS, nil)
+	return wrapper.SampleJSON(c, resp.RespCodeSuccess, nil)
 }
 
 func (h *deleteEdgexHandler) CheckParams() error {

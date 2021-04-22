@@ -36,7 +36,7 @@ func buildCreateEdgexHandler(c *gin.Context) *createEdgexHandler {
 }
 
 // CreateEdgex ...
-func CreateEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
+func CreateEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 
 	h := buildCreateEdgexHandler(c)
 
@@ -44,17 +44,17 @@ func CreateEdgex(c *gin.Context) (out *wrapper.JsonOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Warn("[CreateEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_PARAMS_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. createEdgexAndFollow
 	err = h.Process()
 	if err != nil {
 		logs.Warn("[CreateEdgex] params-err: err=%v", err)
-		return wrapper.SampleJson(c, resp.RESP_CODE_DB_ERROR, nil)
+		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJson(c, resp.RESP_CODE_SUCCESS, nil)
+	return wrapper.SampleJSON(c, resp.RespCodeSuccess, nil)
 }
 
 func (h *createEdgexHandler) CheckParams() error {
@@ -93,7 +93,7 @@ func (h *createEdgexHandler) Process() (err error) {
 		Username:     "徐志乐", // TODO: @许月洋 用户信息
 		EdgexID:      edgex.ID,
 		EdgexName:    edgex.EdgexName,
-		Status:       dal.Status_Follow,
+		Status:       dal.StatusFollow,
 		CreatedTime:  time.Now(),
 		ModifiedTime: time.Now(),
 	}

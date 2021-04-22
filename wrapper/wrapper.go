@@ -13,10 +13,10 @@ import (
 	"github.com/nju-iot/edgex_admin/resp"
 )
 
-// JsonOutPutWrapper ...
-func JsonOutPutWrapper(call func(*gin.Context) *JsonOutput) func(c *gin.Context) {
+// JSONOutPutWrapper ...
+func JSONOutPutWrapper(call func(*gin.Context) *JSONOutput) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		var output *JsonOutput
+		var output *JSONOutput
 
 		logs.Info("[wraper-request] url=%s, header=%v, body=%v",
 			c.Request.URL, c.Request.Header, c.Request.Body)
@@ -30,20 +30,20 @@ func JsonOutPutWrapper(call func(*gin.Context) *JsonOutput) func(c *gin.Context)
 				buffer = buffer[:runtime.Stack(buffer, false)]
 				logs.Error("[wrapper-panic] error=%v, stack=%s", tErr, buffer)
 
-				rsp := resp.NewStdResponse(resp.RESP_CODE_SEVER_EXCEPTION, nil)
-				output = NewJsonOutput(c, http.StatusInternalServerError, rsp)
+				rsp := resp.NewStdResponse(resp.RespCodeServerException, nil)
+				output = NewJSONOutput(c, http.StatusInternalServerError, rsp)
 			}
 			if output == nil {
 				logs.Error("[wraper-output-empty] output is empty!")
-				rsp := resp.NewStdResponse(resp.RESP_CODE_SEVER_EXCEPTION, nil)
-				output = NewJsonOutput(c, http.StatusInternalServerError, rsp)
+				rsp := resp.NewStdResponse(resp.RespCodeServerException, nil)
+				output = NewJSONOutput(c, http.StatusInternalServerError, rsp)
 			}
 
 			output.Write()
 
 			userTime := time.Since(start).Nanoseconds() / 1000
 			logs.Info("[wraper-response] useTime=%d, status=%d, resp=%s",
-				userTime, output.HttpStatus, GetMarshalStr(output.Resp))
+				userTime, output.HTTPStatus, GetMarshalStr(output.Resp))
 		}()
 		output = call(c)
 	}

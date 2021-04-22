@@ -13,10 +13,10 @@ func registerRouter(r *gin.Engine) {
 
 	edgexRouter := r.Group("/edgex_admin/edgex")
 	{
-		edgexRouter.GET("/search", wrapper.JsonOutPutWrapper(edgex.SearchEdgex))
-		edgexRouter.POST("/create", wrapper.JsonOutPutWrapper(edgex.CreateEdgex))
-		edgexRouter.POST("/delete", wrapper.JsonOutPutWrapper(edgex.DeleteEdgex))
-		edgexRouter.POST("/follow", wrapper.JsonOutPutWrapper(edgex.FollowEdgex))
-		edgexRouter.POST("/unfollow", wrapper.JsonOutPutWrapper(edgex.UnFollowEdgex))
+		edgexRouter.GET("/search", wrapper.JSONOutPutWrapper(edgex.SearchEdgex))
+		edgexRouter.POST("/create", wrapper.JSONOutPutWrapper(edgex.CreateEdgex))
+		edgexRouter.POST("/delete", wrapper.JSONOutPutWrapper(edgex.DeleteEdgex))
+		edgexRouter.POST("/follow", wrapper.JSONOutPutWrapper(edgex.FollowEdgex))
+		edgexRouter.POST("/unfollow", wrapper.JSONOutPutWrapper(edgex.UnFollowEdgex))
 	}
 }
