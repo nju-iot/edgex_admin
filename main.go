@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"time"
 
 	ginzap "github.com/gin-contrib/zap"
@@ -14,7 +15,11 @@ import (
 
 func main() {
 
-	config.LoadConfig()
+	var confFilePath string
+	flag.StringVar(&confFilePath, "conf", "", "Specify local configuration file path")
+	flag.Parse()
+
+	config.LoadConfig(confFilePath)
 	logs.InitLogs()
 	caller.InitClient()
 	cronloader.InitCronLoader()

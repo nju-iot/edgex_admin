@@ -5,7 +5,6 @@ import (
 )
 
 func Ping(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
+	c.Writer.Header().Add("Content-Type", "text/plain")
+	_, _ = c.Writer.Write([]byte("pong"))
 }

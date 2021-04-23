@@ -5,7 +5,6 @@ import (
 
 	"github.com/nju-iot/edgex_admin/caller"
 	"github.com/nju-iot/edgex_admin/logs"
-	"github.com/nju-iot/edgex_admin/utils"
 	"gorm.io/gorm"
 )
 
@@ -63,9 +62,9 @@ func FindEdgexRelatedUserByUserIDAndEdgexID(edgexID int64, userID int64) (entity
 	return
 }
 
-// GetFollowEdgexIDs ...
-func GetFollowEdgexIDs(userID int64) (edgexIDs []int64, err error) {
-	edgexIDs = make([]int64, 0)
+// GetFollowMapByUserID ...
+func GetFollowMapByUserID(userID int64) (followMap map[int64]bool, err error) {
+	followMap = make(map[int64]bool)
 	itemList := make([]*EdgexRelatedUser, 0)
 	dbRes := caller.EdgexDB.Debug().Model(&EdgexRelatedUser{}).
 		Where("user_id = ? and status = 1", userID).
@@ -80,9 +79,7 @@ func GetFollowEdgexIDs(userID int64) (edgexIDs []int64, err error) {
 		if item == nil {
 			continue
 		}
-		edgexIDs = append(edgexIDs, item.EdgexID)
+		followMap[item.EdgexID] = true
 	}
-	edgexIDs = utils.DeduplicationI64List(edgexIDs)
 	return
-
 }

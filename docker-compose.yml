@@ -1,0 +1,52 @@
+
+
+
+version: '3.7'
+
+services:
+    iot-mysql:
+        image: mysql:8.0.21
+        container_name: iot-mysql
+        volumes:
+            # - ./mysql/data:/var/lib/mysql
+            # - ./mysql/conf:/etc/mysql/conf.d
+            - ./dal:/docker-entrypoint-initdb.d
+        environment:
+            TZ: Asia/Shanghai
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: edgex
+            MYSQL_PASSWORD: edgex
+            MYSQL_DATABASE: nju_iot
+        ports:
+            - 3306:3306/tcp
+        restart: always
+        command: 
+            --default-authentication-plugin=mysql_native_password
+            --character-set-server=utf8mb4
+            --collation-server=utf8mb4_general_ci
+            --explicit_defaults_for_timestamp=true
+            --lower_case_table_names=1
+
+    iot-redis:
+        image: redis:6.2.2
+        container_name: iot-redis
+        ports:
+            - 6379:6379/tcp
+        restart: always
+                
+    edgex-admin:
+        command: sh -C './wait-for iot-mysql:3306 -- echo "mysql is ready!"'
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image: edgex-admin:latest
+        container_name: iot-edgex-admin
+        links:
+            - iot-mysql
+            - iot-redis
+        ports:
+            - 6789:6789/tcp
+        restart: always
+        depends_on: 
+            - iot-mysql
+            - iot-redis

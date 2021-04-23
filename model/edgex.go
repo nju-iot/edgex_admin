@@ -14,4 +14,5 @@ type EdgexInfo struct {
 	Description      string `json:"description"`
 	Location         string `json:"location"`
 	Extra            string `json:"extra"`
+	IsFollow         bool   `json:"is_follow"`
 }
