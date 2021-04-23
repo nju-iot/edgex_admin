@@ -13,11 +13,13 @@
 # See the License for the specific language governing permissions and
 FROM golang:1.15
 
-ENV GO111MODULE=on GOPROXY=https://goproxy.cn GOSUMDB=off
+ENV CONF_FILE_PATH=config/docker/app.ini GO111MODULE=on GOPROXY=https://goproxy.cn GOSUMDB=off
 
 RUN mkdir -p $GOPATH/src/github.com/nju-iot/edgex_admin
 
 COPY . $GOPATH/src/github.com/nju-iot/edgex_admin/
+
+COPY ./wait-for /usr/local/bin/
 
 WORKDIR $GOPATH/src/github.com/nju-iot/edgex_admin
 

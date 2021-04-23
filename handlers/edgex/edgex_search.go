@@ -99,11 +99,18 @@ func (h *searchEdgexHandler) Process() (err error) {
 		keyword  = h.Params.Keyword
 	)
 
+	followMap, err := dal.GetFollowMapByUserID(h.Params.UserID)
+	if err != nil {
+		return
+	}
+
 	switch h.Params.Action {
 	case ActionMe:
 		userIDs = []int64{h.Params.UserID}
 	case ActionFollow:
-		edgexIDs, err = dal.GetFollowEdgexIDs(h.Params.UserID)
+		for edgexID := range followMap {
+			edgexIDs = append(edgexIDs, edgexID)
+		}
 		if err != nil {
 			return
 		}
@@ -128,11 +135,11 @@ func (h *searchEdgexHandler) Process() (err error) {
 		return err
 	}
 
-	h.Pack(edgexList)
+	h.Pack(edgexList, followMap)
 	return
 }
 
-func (h *searchEdgexHandler) Pack(edgexList []*dal.EdgexServiceItem) {
+func (h *searchEdgexHandler) Pack(edgexList []*dal.EdgexServiceItem, followMap map[int64]bool) {
 
 	h.EdgexList = make([]*model.EdgexInfo, 0)
 
@@ -150,6 +157,7 @@ func (h *searchEdgexHandler) Pack(edgexList []*dal.EdgexServiceItem) {
 			Description:      item.Description,
 			Location:         item.Location,
 			Extra:            item.Extra,
+			IsFollow:         followMap[item.ID],
 		})
 	}
 }

@@ -48,8 +48,11 @@ type Database struct {
 	DBName     string
 }
 
-func LoadConfig() {
-	absPath, err := filepath.Abs(appINIFilePath)
+func LoadConfig(confFilePath string) {
+	if confFilePath == "" {
+		confFilePath = appINIFilePath
+	}
+	absPath, err := filepath.Abs(confFilePath)
 	if err != nil {
 		panic(err)
 	}
