@@ -11,7 +11,6 @@ import (
 	"github.com/nju-iot/edgex_admin/model"
 	"github.com/nju-iot/edgex_admin/resp"
 	"github.com/nju-iot/edgex_admin/utils"
-	"github.com/nju-iot/edgex_admin/wrapper"
 )
 
 const (
@@ -44,7 +43,7 @@ func buildSearchEdgexHandler(c *gin.Context) *searchEdgexHandler {
 }
 
 // SearchEdgex ...
-func SearchEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
+func SearchEdgex(c *gin.Context) (out *resp.JSONOutput) {
 
 	h := buildSearchEdgexHandler(c)
 
@@ -52,17 +51,17 @@ func SearchEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Error("[SearchEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
+		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. search
 	err = h.Process()
 	if err != nil {
 		logs.Error("[SearchEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
+		return resp.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJSON(c, resp.RespCodeSuccess, h.EdgexList)
+	return resp.SampleJSON(c, resp.RespCodeSuccess, h.EdgexList)
 }
 
 func (h *searchEdgexHandler) CheckParams() error {

@@ -10,7 +10,6 @@ import (
 	"github.com/nju-iot/edgex_admin/dal"
 	"github.com/nju-iot/edgex_admin/logs"
 	"github.com/nju-iot/edgex_admin/resp"
-	"github.com/nju-iot/edgex_admin/wrapper"
 )
 
 // CreateEdgexParams ...
@@ -36,7 +35,7 @@ func buildCreateEdgexHandler(c *gin.Context) *createEdgexHandler {
 }
 
 // CreateEdgex ...
-func CreateEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
+func CreateEdgex(c *gin.Context) (out *resp.JSONOutput) {
 
 	h := buildCreateEdgexHandler(c)
 
@@ -44,17 +43,17 @@ func CreateEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Warn("[CreateEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
+		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. createEdgexAndFollow
 	err = h.Process()
 	if err != nil {
 		logs.Warn("[CreateEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
+		return resp.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJSON(c, resp.RespCodeSuccess, nil)
+	return resp.SampleJSON(c, resp.RespCodeSuccess, nil)
 }
 
 func (h *createEdgexHandler) CheckParams() error {

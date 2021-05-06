@@ -3,7 +3,6 @@ package caller
 import (
 	"fmt"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/nju-iot/edgex_admin/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,23 +10,23 @@ import (
 )
 
 var (
-	RedisClient *redis.Client
-	EdgexDB     *gorm.DB
+	// EdgexDB ...
+	EdgexDB *gorm.DB
 )
 
 func InitClient() {
-	initRedisClient()
+	// initRedisClient()
 	initMysqlClient()
 }
 
-func initRedisClient() {
-	redisOpt := &redis.Options{
-		Addr:     config.RedisConf.Address,
-		Password: config.RedisConf.Password,
-		DB:       config.RedisConf.DB,
-	}
-	RedisClient = redis.NewClient(redisOpt)
-}
+// func initRedisClient() {
+// 	redisOpt := &redis.Options{
+// 		Addr:     config.RedisConf.Address,
+// 		Password: config.RedisConf.Password,
+// 		DB:       config.RedisConf.DB,
+// 	}
+// 	RedisClient = redis.NewClient(redisOpt)
+// }
 
 func initMysqlClient() {
 

@@ -1,4 +1,4 @@
-package wrapper
+package resp
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"reflect"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nju-iot/edgex_admin/resp"
 )
 
 // JSONOutput ...
@@ -26,8 +25,8 @@ func NewJSONOutput(c *gin.Context, httpStatus int, rsp interface{}) *JSONOutput 
 }
 
 // SampleJSON ...
-func SampleJSON(c *gin.Context, p resp.ErrorCode, data interface{}) *JSONOutput {
-	return NewJSONOutput(c, http.StatusOK, resp.NewStdResponse(p, data))
+func SampleJSON(c *gin.Context, p ErrorCode, data interface{}) *JSONOutput {
+	return NewJSONOutput(c, http.StatusOK, NewStdResponse(p, data))
 }
 
 // GetRespRawData ...
@@ -44,5 +43,7 @@ func (s *JSONOutput) GetRespRawData() []byte {
 func (s *JSONOutput) Write() {
 	s.context.Writer.WriteHeader(s.HTTPStatus)
 	s.context.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+	// 允许跨域访问
+	s.context.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 	_, _ = s.context.Writer.Write(s.GetRespRawData())
 }
