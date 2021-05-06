@@ -5,6 +5,7 @@ type ErrorCode int32
 const (
 	RespCodeSuccess         ErrorCode = 0
 	RespCodeParamsError     ErrorCode = 4001
+	RespCodeUserExsit       ErrorCode = 4002
 	RespCodeServerException ErrorCode = 5000
 	RespDatabaseError       ErrorCode = 5001
 	RespCodeRedisError      ErrorCode = 5002
@@ -23,6 +24,8 @@ func (p ErrorCode) Prompts() string {
 		return ""
 	case RespCodeParamsError:
 		return "请求参数错误"
+	case RespCodeUserExsit:
+		return "用户名已存在"
 	case RespCodeServerException, RespDatabaseError,
 		RespCodeRedisError, RespCodeRPCError:
 		return "服务器内部错误，请稍后重试"
@@ -36,6 +39,8 @@ func (p ErrorCode) Message() string {
 		return "success"
 	case RespCodeParamsError:
 		return "params error"
+	case RespCodeUserExsit:
+		return "username exsited"
 	case RespCodeServerException, RespDatabaseError,
 		RespCodeRedisError, RespCodeRPCError:
 		return "server exception"

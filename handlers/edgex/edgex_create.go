@@ -9,13 +9,14 @@ import (
 	"github.com/nju-iot/edgex_admin/caller"
 	"github.com/nju-iot/edgex_admin/dal"
 	"github.com/nju-iot/edgex_admin/logs"
+	"github.com/nju-iot/edgex_admin/middleware/session"
 	"github.com/nju-iot/edgex_admin/resp"
-	"github.com/nju-iot/edgex_admin/wrapper"
 )
 
 // CreateEdgexParams ...
 type CreateEdgexParams struct {
-	UserID      int64  `form:"user_id" json:"user_id" binding:"required"`
+	UserID      int64
+	Username    string
 	EdgexName   string `form:"edgex_name" json:"edgex_name" binding:"required"`
 	Prefix      string `form:"prefix" json:"prefix" binding:"required"`
 	Description string `form:"description" json:"description" binding:"required"`
@@ -36,7 +37,7 @@ func buildCreateEdgexHandler(c *gin.Context) *createEdgexHandler {
 }
 
 // CreateEdgex ...
-func CreateEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
+func CreateEdgex(c *gin.Context) (out *resp.JSONOutput) {
 
 	h := buildCreateEdgexHandler(c)
 
@@ -44,17 +45,17 @@ func CreateEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Warn("[CreateEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
+		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. createEdgexAndFollow
 	err = h.Process()
 	if err != nil {
 		logs.Warn("[CreateEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
+		return resp.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJSON(c, resp.RespCodeSuccess, nil)
+	return resp.SampleJSON(c, resp.RespCodeSuccess, nil)
 }
 
 func (h *createEdgexHandler) CheckParams() error {
@@ -69,6 +70,9 @@ func (h *createEdgexHandler) CheckParams() error {
 		logs.Error("[createEdgexHandler-checkParams] params-err: prefix=%v", h.Params.Prefix)
 		return fmt.Errorf("prefix is invalid: prefix=%v", h.Params.Prefix)
 	}
+
+	h.Params.UserID = session.GetSessionUserID(h.Ctx)
+	h.Params.Username = session.GetSessionUsername(h.Ctx)
 	return nil
 }
 
@@ -90,7 +94,7 @@ func (h *createEdgexHandler) Process() (err error) {
 	}
 	item := &dal.EdgexRelatedUser{
 		UserID:       h.Params.UserID,
-		Username:     "徐志乐", // TODO: @许月洋 用户信息
+		Username:     h.Params.Username,
 		EdgexID:      edgex.ID,
 		EdgexName:    edgex.EdgexName,
 		Status:       dal.StatusFollow,

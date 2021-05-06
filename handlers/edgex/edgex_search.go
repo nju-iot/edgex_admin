@@ -8,10 +8,10 @@ import (
 	"github.com/nju-iot/edgex_admin/constdef"
 	"github.com/nju-iot/edgex_admin/dal"
 	"github.com/nju-iot/edgex_admin/logs"
+	"github.com/nju-iot/edgex_admin/middleware/session"
 	"github.com/nju-iot/edgex_admin/model"
 	"github.com/nju-iot/edgex_admin/resp"
 	"github.com/nju-iot/edgex_admin/utils"
-	"github.com/nju-iot/edgex_admin/wrapper"
 )
 
 const (
@@ -23,7 +23,7 @@ const (
 // SearchEdgexParams ...
 type SearchEdgexParams struct {
 	Action  string `form:"action" json:"action"`
-	UserID  int64  `form:"user_id" json:"user_id"`
+	UserID  int64
 	Keyword string `form:"keyword" json:"keyword"`
 	Status  int    `form:"status" json:"status"`
 	Offset  int    `form:"offset" json:"offset"`
@@ -44,7 +44,7 @@ func buildSearchEdgexHandler(c *gin.Context) *searchEdgexHandler {
 }
 
 // SearchEdgex ...
-func SearchEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
+func SearchEdgex(c *gin.Context) (out *resp.JSONOutput) {
 
 	h := buildSearchEdgexHandler(c)
 
@@ -52,17 +52,17 @@ func SearchEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Error("[SearchEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
+		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. search
 	err = h.Process()
 	if err != nil {
 		logs.Error("[SearchEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
+		return resp.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJSON(c, resp.RespCodeSuccess, h.EdgexList)
+	return resp.SampleJSON(c, resp.RespCodeSuccess, h.EdgexList)
 }
 
 func (h *searchEdgexHandler) CheckParams() error {
@@ -72,6 +72,8 @@ func (h *searchEdgexHandler) CheckParams() error {
 		logs.Error("[searchEdgexHandler-checkParams] params-err: err=%v", err)
 		return err
 	}
+
+	h.Params.UserID = session.GetSessionUserID(h.Ctx)
 
 	if h.Params.Action == "" {
 		h.Params.Action = ActionAll

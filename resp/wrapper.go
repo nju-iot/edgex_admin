@@ -1,4 +1,4 @@
-package wrapper
+package resp
 
 import (
 	"encoding/json"
@@ -10,7 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nju-iot/edgex_admin/logs"
-	"github.com/nju-iot/edgex_admin/resp"
 )
 
 // JSONOutPutWrapper ...
@@ -30,12 +29,12 @@ func JSONOutPutWrapper(call func(*gin.Context) *JSONOutput) func(c *gin.Context)
 				buffer = buffer[:runtime.Stack(buffer, false)]
 				logs.Error("[wrapper-panic] error=%v, stack=%s", tErr, buffer)
 
-				rsp := resp.NewStdResponse(resp.RespCodeServerException, nil)
+				rsp := NewStdResponse(RespCodeServerException, nil)
 				output = NewJSONOutput(c, http.StatusInternalServerError, rsp)
 			}
 			if output == nil {
 				logs.Error("[wraper-output-empty] output is empty!")
-				rsp := resp.NewStdResponse(resp.RespCodeServerException, nil)
+				rsp := NewStdResponse(RespCodeServerException, nil)
 				output = NewJSONOutput(c, http.StatusInternalServerError, rsp)
 			}
 

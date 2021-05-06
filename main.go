@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nju-iot/edgex_admin/caller"
 	"github.com/nju-iot/edgex_admin/config"
-	"github.com/nju-iot/edgex_admin/cronloader"
 	"github.com/nju-iot/edgex_admin/logs"
+	"github.com/nju-iot/edgex_admin/middleware/session"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +22,7 @@ func main() {
 	config.LoadConfig(confFilePath)
 	logs.InitLogs()
 	caller.InitClient()
-	cronloader.InitCronLoader()
+	// cronloader.InitCronLoader()
 
 	gin.SetMode(config.Server.RunMode)
 
@@ -30,6 +30,8 @@ func main() {
 	r.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true))
 	r.Use(ginzap.RecoveryWithZap(zap.L(), true))
 
+	r.Use(session.EnableRedisSession())
+	r.Use(session.SessionMiddleware())
 	registerRouter(r)
 
 	_ = r.Run(config.Server.Port)

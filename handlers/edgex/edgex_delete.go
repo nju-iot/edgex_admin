@@ -8,7 +8,6 @@ import (
 	"github.com/nju-iot/edgex_admin/dal"
 	"github.com/nju-iot/edgex_admin/logs"
 	"github.com/nju-iot/edgex_admin/resp"
-	"github.com/nju-iot/edgex_admin/wrapper"
 )
 
 // DeleteEdgexParams ...
@@ -28,7 +27,7 @@ func buildDeleteEdgexHandler(c *gin.Context) *deleteEdgexHandler {
 }
 
 // DeleteEdgex ...
-func DeleteEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
+func DeleteEdgex(c *gin.Context) (out *resp.JSONOutput) {
 
 	h := buildDeleteEdgexHandler(c)
 
@@ -36,17 +35,17 @@ func DeleteEdgex(c *gin.Context) (out *wrapper.JSONOutput) {
 	err := h.CheckParams()
 	if err != nil {
 		logs.Warn("[DeleteEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespCodeParamsError, nil)
+		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 
 	// Step2. update deleted
 	err = h.Process()
 	if err != nil {
 		logs.Warn("[DeleteEdgex] params-err: err=%v", err)
-		return wrapper.SampleJSON(c, resp.RespDatabaseError, nil)
+		return resp.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 
-	return wrapper.SampleJSON(c, resp.RespCodeSuccess, nil)
+	return resp.SampleJSON(c, resp.RespCodeSuccess, nil)
 }
 
 func (h *deleteEdgexHandler) CheckParams() error {
