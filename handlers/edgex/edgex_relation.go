@@ -7,14 +7,15 @@ import (
 	"github.com/nju-iot/edgex_admin/caller"
 	"github.com/nju-iot/edgex_admin/dal"
 	"github.com/nju-iot/edgex_admin/logs"
+	"github.com/nju-iot/edgex_admin/middleware/session"
 	"github.com/nju-iot/edgex_admin/resp"
 )
 
 // RelationEdgexParams ...
 type RelationEdgexParams struct {
-	UserID    int64  `form:"user_id" json:"user_id" binding:"required"`
+	UserID    int64
+	Username  string
 	EdgexID   int64  `form:"edgex_id" json:"edgex_id" binding:"required"`
-	Username  string `form:"username" json:"username"`
 	EdgexName string `form:"edgex_name" json:"edgex_name"`
 }
 
@@ -38,6 +39,8 @@ func (h *relationEdgexHandler) CheckParams() error {
 		logs.Error("[relationEdgexHandler-checkParams] params-err: err=%v", err)
 		return err
 	}
+	h.Params.UserID = session.GetSessionUserID(h.Ctx)
+	h.Params.Username = session.GetSessionUsername(h.Ctx)
 	return nil
 }
 

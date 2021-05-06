@@ -114,3 +114,22 @@ func GetSessionUserID(c *gin.Context) int64 {
 	}
 	return userInfo.UserID
 }
+
+// GetSessionUsername ...
+func GetSessionUsername(c *gin.Context) string {
+	sessionID, _ := c.Cookie(CookieName)
+	if sessionID == "" {
+		return ""
+	}
+	session := sessions.Default(c)
+	sessionValue := session.Get(sessionID)
+	if sessionValue == nil {
+		return ""
+	}
+	userInfo := &userInfo{}
+	err := json.Unmarshal([]byte(sessionValue.(string)), &userInfo)
+	if err != nil || userInfo == nil || userInfo.UserID <= 0 {
+		return ""
+	}
+	return userInfo.UserName
+}

@@ -8,6 +8,7 @@ import (
 	"github.com/nju-iot/edgex_admin/constdef"
 	"github.com/nju-iot/edgex_admin/dal"
 	"github.com/nju-iot/edgex_admin/logs"
+	"github.com/nju-iot/edgex_admin/middleware/session"
 	"github.com/nju-iot/edgex_admin/model"
 	"github.com/nju-iot/edgex_admin/resp"
 	"github.com/nju-iot/edgex_admin/utils"
@@ -22,7 +23,7 @@ const (
 // SearchEdgexParams ...
 type SearchEdgexParams struct {
 	Action  string `form:"action" json:"action"`
-	UserID  int64  `form:"user_id" json:"user_id"`
+	UserID  int64
 	Keyword string `form:"keyword" json:"keyword"`
 	Status  int    `form:"status" json:"status"`
 	Offset  int    `form:"offset" json:"offset"`
@@ -71,6 +72,8 @@ func (h *searchEdgexHandler) CheckParams() error {
 		logs.Error("[searchEdgexHandler-checkParams] params-err: err=%v", err)
 		return err
 	}
+
+	h.Params.UserID = session.GetSessionUserID(h.Ctx)
 
 	if h.Params.Action == "" {
 		h.Params.Action = ActionAll

@@ -5,6 +5,7 @@ import (
 	"github.com/nju-iot/edgex_admin/handlers"
 	"github.com/nju-iot/edgex_admin/handlers/edgex"
 	"github.com/nju-iot/edgex_admin/handlers/user"
+	"github.com/nju-iot/edgex_admin/middleware/session"
 	"github.com/nju-iot/edgex_admin/resp"
 )
 
@@ -12,7 +13,7 @@ func registerRouter(r *gin.Engine) {
 	r.GET("/ping", handlers.Ping)
 	// your code
 
-	edgexRouter := r.Group("/edgex_admin/edgex")
+	edgexRouter := r.Group("/edgex_admin/edgex", session.AuthSessionMiddle())
 	{
 		edgexRouter.GET("/search", resp.JSONOutPutWrapper(edgex.SearchEdgex))
 		edgexRouter.POST("/create", resp.JSONOutPutWrapper(edgex.CreateEdgex))
