@@ -42,8 +42,9 @@ func (s *JSONOutput) GetRespRawData() []byte {
 // Write ...
 func (s *JSONOutput) Write() {
 	s.context.Writer.WriteHeader(s.HTTPStatus)
-	s.context.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	// 允许跨域访问
 	s.context.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	s.context.Writer.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	s.context.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_, _ = s.context.Writer.Write(s.GetRespRawData())
 }

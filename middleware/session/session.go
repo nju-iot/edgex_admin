@@ -61,9 +61,10 @@ func AuthSessionMiddle() gin.HandlerFunc {
 		sessionValue := session.Get(sessionID)
 		if sessionID == "" || sessionValue == nil {
 			c.Writer.WriteHeader(http.StatusUnauthorized)
-			c.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 			// 允许跨域访问
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+			c.Writer.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+			c.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 			rawData, _ := json.Marshal(gin.H{"error": "Unauthorized"})
 			_, _ = c.Writer.Write(rawData)
 			c.Abort()
