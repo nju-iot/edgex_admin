@@ -31,7 +31,7 @@ func main() {
 	r.Use(ginzap.RecoveryWithZap(zap.L(), true))
 
 	r.Use(session.EnableRedisSession())
-	r.Use(session.SessionMiddleware())
+	// r.Use(session.SessionMiddleware())
 	registerRouter(r)
 
 	_ = r.Run(config.Server.Port)

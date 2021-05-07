@@ -22,12 +22,13 @@ const (
 
 // SearchEdgexParams ...
 type SearchEdgexParams struct {
-	Action  string `form:"action" json:"action"`
-	UserID  int64
-	Keyword string `form:"keyword" json:"keyword"`
-	Status  int    `form:"status" json:"status"`
-	Offset  int    `form:"offset" json:"offset"`
-	Count   int    `form:"count" json:"count"`
+	Action   string `form:"action" json:"action"`
+	UserID   int64
+	Username string
+	Keyword  string `form:"keyword" json:"keyword"`
+	Status   int    `form:"status" json:"status"`
+	Offset   int    `form:"offset" json:"offset"`
+	Count    int    `form:"count" json:"count"`
 }
 
 type searchEdgexHandler struct {
@@ -74,6 +75,7 @@ func (h *searchEdgexHandler) CheckParams() error {
 	}
 
 	h.Params.UserID = session.GetSessionUserID(h.Ctx)
+	h.Params.Username = session.GetSessionUsername(h.Ctx)
 
 	if h.Params.Action == "" {
 		h.Params.Action = ActionAll
@@ -150,7 +152,7 @@ func (h *searchEdgexHandler) Pack(edgexList []*dal.EdgexServiceItem, followMap m
 			EdgexID:          item.ID,
 			EdgexName:        item.EdgexName,
 			UserID:           item.UserID,
-			UserName:         "徐志乐", //  TODO：@许月洋
+			UserName:         h.Params.Username,
 			Prefix:           item.Prefix,
 			Address:          item.Address,
 			Status:           item.Status,
