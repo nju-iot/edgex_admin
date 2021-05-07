@@ -4,6 +4,7 @@ import (
 	"flag"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/nju-iot/edgex_admin/caller"
@@ -29,6 +30,9 @@ func main() {
 	r := gin.New()
 	r.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true))
 	r.Use(ginzap.RecoveryWithZap(zap.L(), true))
+
+	// 允许跨域访问
+	r.Use(cors.Default())
 
 	r.Use(session.EnableRedisSession())
 	// r.Use(session.SessionMiddleware())
