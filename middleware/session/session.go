@@ -40,7 +40,6 @@ func SessionMiddleware() gin.HandlerFunc {
 		sessionID, _ := c.Cookie(CookieName)
 		if sessionID == "" {
 			sessionID = uuid.NewV4().String()
-			c.SetCookie(CookieName, sessionID, 20*60, "/", "", false, true)
 		}
 		session := sessions.Default(c)
 		sessionValue := session.Get(sessionID)
@@ -48,6 +47,8 @@ func SessionMiddleware() gin.HandlerFunc {
 			session.Set(sessionID, sessionValue)
 			_ = session.Save()
 		}
+		c.SetCookie(CookieName, sessionID, 20*60, "/", "", false, true)
+		c.Set(CookieName, sessionID)
 		c.Next()
 	}
 }
@@ -75,7 +76,7 @@ func AuthSessionMiddle() gin.HandlerFunc {
 // SaveAuthSession 注册和登陆时都需要保存seesion信息
 func SaveAuthSession(c *gin.Context, userID int64, username string) {
 	session := sessions.Default(c)
-	sessionID, _ := c.Cookie(CookieName)
+	sessionID, _ := c.Get(CookieName)
 	userInfo := &userInfo{
 		UserID:   userID,
 		UserName: username,
@@ -87,8 +88,8 @@ func SaveAuthSession(c *gin.Context, userID int64, username string) {
 
 // ClearAuthSession 退出时清除session
 func ClearAuthSession(c *gin.Context) {
-	sessionID, _ := c.Cookie(CookieName)
-	if sessionID == "" {
+	sessionID, exsit := c.Get(CookieName)
+	if !exsit || sessionID.(string) == "" {
 		return
 	}
 	session := sessions.Default(c)
@@ -98,8 +99,8 @@ func ClearAuthSession(c *gin.Context) {
 
 // GetSessionUserID ...
 func GetSessionUserID(c *gin.Context) int64 {
-	sessionID, _ := c.Cookie(CookieName)
-	if sessionID == "" {
+	sessionID, exsit := c.Get(CookieName)
+	if !exsit || sessionID.(string) == "" {
 		return 0
 	}
 	session := sessions.Default(c)
@@ -117,8 +118,8 @@ func GetSessionUserID(c *gin.Context) int64 {
 
 // GetSessionUsername ...
 func GetSessionUsername(c *gin.Context) string {
-	sessionID, _ := c.Cookie(CookieName)
-	if sessionID == "" {
+	sessionID, exsit := c.Get(CookieName)
+	if !exsit || sessionID.(string) == "" {
 		return ""
 	}
 	session := sessions.Default(c)
