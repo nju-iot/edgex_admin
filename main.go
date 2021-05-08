@@ -35,6 +35,7 @@ func main() {
 	r.Use(cors.CorsMiddleware())
 
 	r.Use(session.EnableRedisSession())
+	r.Use(session.SessionMiddleware())
 
 	registerRouter(r)
 
