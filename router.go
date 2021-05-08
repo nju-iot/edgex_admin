@@ -17,6 +17,7 @@ func registerRouter(r *gin.Engine) {
 	{
 		edgexRouter.GET("/search", resp.JSONOutPutWrapper(edgex.SearchEdgex))
 		edgexRouter.POST("/create", resp.JSONOutPutWrapper(edgex.CreateEdgex))
+		edgexRouter.POST("/update", resp.JSONOutPutWrapper(edgex.UpdateEdgex))
 		edgexRouter.POST("/delete", resp.JSONOutPutWrapper(edgex.DeleteEdgex))
 		edgexRouter.POST("/follow", resp.JSONOutPutWrapper(edgex.FollowEdgex))
 		edgexRouter.POST("/unfollow", resp.JSONOutPutWrapper(edgex.UnFollowEdgex))
