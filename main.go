@@ -9,6 +9,7 @@ import (
 	"github.com/nju-iot/edgex_admin/caller"
 	"github.com/nju-iot/edgex_admin/config"
 	"github.com/nju-iot/edgex_admin/logs"
+
 	"github.com/nju-iot/edgex_admin/middleware/cors"
 	"github.com/nju-iot/edgex_admin/middleware/session"
 	"go.uber.org/zap"
@@ -34,7 +35,7 @@ func main() {
 	r.Use(cors.CorsMiddleware())
 
 	r.Use(session.EnableRedisSession())
-	// r.Use(session.SessionMiddleware())
+
 	registerRouter(r)
 
 	_ = r.Run(config.Server.Port)
