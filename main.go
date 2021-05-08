@@ -23,7 +23,6 @@ func main() {
 	config.LoadConfig(confFilePath)
 	logs.InitLogs()
 	caller.InitClient()
-	// cronloader.InitCronLoader()
 
 	gin.SetMode(config.Server.RunMode)
 
