@@ -74,7 +74,6 @@ func (h *updateEdgexHandler) CheckParams() error {
 			return fmt.Errorf("prefix is invalid: prefix=%v", h.Params.Prefix)
 		}
 	}
-
 	return nil
 }
 
