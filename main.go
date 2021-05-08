@@ -4,12 +4,12 @@ import (
 	"flag"
 	"time"
 
-	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/nju-iot/edgex_admin/caller"
 	"github.com/nju-iot/edgex_admin/config"
 	"github.com/nju-iot/edgex_admin/logs"
+	"github.com/nju-iot/edgex_admin/middleware/cors"
 	"github.com/nju-iot/edgex_admin/middleware/session"
 	"go.uber.org/zap"
 )
@@ -31,7 +31,7 @@ func main() {
 	r.Use(ginzap.RecoveryWithZap(zap.L(), true))
 
 	// 允许跨域访问
-	r.Use(cors.Default())
+	r.Use(cors.CorsMiddleware())
 
 	r.Use(session.EnableRedisSession())
 	// r.Use(session.SessionMiddleware())
