@@ -34,6 +34,7 @@ func main() {
 	// 允许跨域访问
 	r.Use(cors.CorsMiddleware())
 
+	// session中间件
 	r.Use(session.EnableRedisSession())
 	r.Use(session.SessionMiddleware())
 

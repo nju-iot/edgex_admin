@@ -47,7 +47,6 @@ func SessionMiddleware() gin.HandlerFunc {
 			session.Set(sessionID, sessionValue)
 			_ = session.Save()
 		}
-		c.SetCookie(CookieName, sessionID, 20*60, "/", "", false, true)
 		c.Set(CookieName, sessionID)
 		c.Next()
 	}
@@ -73,6 +72,7 @@ func AuthSessionMiddle() gin.HandlerFunc {
 
 // SaveAuthSession 注册和登陆时都需要保存seesion信息
 func SaveAuthSession(c *gin.Context, userID int64, username string) {
+
 	session := sessions.Default(c)
 	sessionID, _ := c.Get(CookieName)
 	userInfo := &userInfo{
@@ -82,6 +82,9 @@ func SaveAuthSession(c *gin.Context, userID int64, username string) {
 	userInfoBytes, _ := json.Marshal(userInfo)
 	session.Set(sessionID, string(userInfoBytes))
 	_ = session.Save()
+
+	// 设置cookie
+	c.SetCookie(CookieName, sessionID.(string), 24*3600, "/", "", false, true)
 }
 
 // ClearAuthSession 退出时清除session
