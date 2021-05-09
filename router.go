@@ -25,7 +25,7 @@ func registerRouter(r *gin.Engine) {
 	userRouter := r.Group("/edgex_admin/user")
 	{
 		userRouter.POST("/register", resp.JSONOutPutWrapper(user.Register))
-		userRouter.POST("/login", session.MiddlewareSession(), resp.JSONOutPutWrapper(user.Login))
+		userRouter.POST("/login", resp.JSONOutPutWrapper(user.Login))
 		userRouter.GET("/logout", resp.JSONOutPutWrapper(user.Logout))
 	}
 }
