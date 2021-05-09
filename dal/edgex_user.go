@@ -61,6 +61,28 @@ func GetEdgexUserByID(id int64) (user *EdgexUser, err error) {
 	return
 }
 
+// GetEdgexUserByNameOrEmail ...
+func GetEdgexUserByNameOrEmail(username string, email string) (userList []*EdgexUser, err error) {
+	userList = make([]*EdgexUser, 0)
+	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("username = ? or email = ?", username, email).Find(&userList)
+	if dbRes.Error != nil {
+		err = dbRes.Error
+		logs.Error("[GetEdgexUserByEmail] get edgex user failed: username=%v, email=%v, err=%v", username, email, err)
+		return
+	}
+	return
+}
+
+// UpdateEdgexUser ...
+func UpdateEdgexUser(userID int64, fieldsMap map[string]interface{}) error {
+	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("id = ?", userID).Updates(fieldsMap)
+	if dbRes.Error != nil {
+		logs.Error("[UpdateEdgexRelatedUser] update EdgexRelatedUser failed: id=%+v, filedsMap=%+v, err=%v", userID, fieldsMap, dbRes.Error)
+		return dbRes.Error
+	}
+	return nil
+}
+
 // MGetEdgexUserMapByIDs ...
 func MGetEdgexUserMapByIDs(ids []int64) (userMap map[int64]*EdgexUser, err error) {
 	userMap = make(map[int64]*EdgexUser)
