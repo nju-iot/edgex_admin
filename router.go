@@ -29,8 +29,6 @@ func registerRouter(r *gin.Engine) {
 		userRouter.GET("/logout", resp.JSONOutPutWrapper(user.Logout))
 		userRouter.POST("/test/email", resp.JSONOutPutWrapper(user.SendMail))
 		userRouter.POST("/registerCheck", resp.JSONOutPutWrapper(user.RegisterCheck))
-		userRouter.POST("/update/entrypted", resp.JSONOutPutWrapper(user.UpdateUserEntrypted))
 		userRouter.POST("/update/password", resp.JSONOutPutWrapper(user.UpdateUserPassword))
-		userRouter.POST("/entryptedcheck", resp.JSONOutPutWrapper(user.CheckUserEntrypted))
 	}
 }
