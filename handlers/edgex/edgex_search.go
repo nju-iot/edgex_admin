@@ -32,9 +32,10 @@ type SearchEdgexParams struct {
 }
 
 type searchEdgexHandler struct {
-	Ctx       *gin.Context
-	Params    SearchEdgexParams
-	EdgexList []*model.EdgexInfo
+	Ctx         *gin.Context
+	Params      SearchEdgexParams
+	UserInfoMap map[int64]*dal.EdgexUser
+	EdgexList   []*model.EdgexInfo
 }
 
 func buildSearchEdgexHandler(c *gin.Context) *searchEdgexHandler {
@@ -98,25 +99,22 @@ func (h *searchEdgexHandler) CheckParams() error {
 func (h *searchEdgexHandler) Process() (err error) {
 
 	var (
-		edgexIDs []int64
-		userIDs  []int64
-		keyword  = h.Params.Keyword
+		edgexIDs  []int64
+		userIDs   []int64
+		keyword   = h.Params.Keyword
+		followMap = make(map[int64]bool)
 	)
-
-	followMap, err := dal.GetFollowMapByUserID(h.Params.UserID)
-	if err != nil {
-		return
-	}
 
 	switch h.Params.Action {
 	case ActionMe:
 		userIDs = []int64{h.Params.UserID}
 	case ActionFollow:
+		followMap, err = dal.GetFollowMapByUserID(h.Params.UserID)
+		if err != nil {
+			return err
+		}
 		for edgexID := range followMap {
 			edgexIDs = append(edgexIDs, edgexID)
-		}
-		if err != nil {
-			return
 		}
 		if len(edgexIDs) == 0 {
 			return nil
@@ -139,6 +137,18 @@ func (h *searchEdgexHandler) Process() (err error) {
 		return err
 	}
 
+	// 获取用户信息
+	var userIDList = make([]int64, 0)
+	for _, edgex := range edgexList {
+		userIDList = append(userIDList, edgex.UserID)
+	}
+	userIDList = utils.DeduplicationI64List(userIDList)
+	h.UserInfoMap, err = dal.MGetEdgexUserMapByIDs(userIDList)
+	if err != nil {
+		logs.Error("[searchEdgexHandler-Process] MGetEdgexUserMapByIDs failed: userIDList=%v, err=%v", userIDList, err)
+		return err
+	}
+
 	h.Pack(edgexList, followMap)
 	return
 }
@@ -148,11 +158,10 @@ func (h *searchEdgexHandler) Pack(edgexList []*dal.EdgexServiceItem, followMap m
 	h.EdgexList = make([]*model.EdgexInfo, 0)
 
 	for _, item := range edgexList {
-		h.EdgexList = append(h.EdgexList, &model.EdgexInfo{
+		var edgexInfo = &model.EdgexInfo{
 			EdgexID:          item.ID,
 			EdgexName:        item.EdgexName,
 			UserID:           item.UserID,
-			UserName:         h.Params.Username,
 			Prefix:           item.Prefix,
 			Address:          item.Address,
 			Status:           item.Status,
@@ -162,6 +171,10 @@ func (h *searchEdgexHandler) Pack(edgexList []*dal.EdgexServiceItem, followMap m
 			Location:         item.Location,
 			Extra:            item.Extra,
 			IsFollow:         followMap[item.ID],
-		})
+		}
+		if h.UserInfoMap[item.UserID] != nil {
+			edgexInfo.UserName = h.UserInfoMap[item.UserID].Username
+		}
+		h.EdgexList = append(h.EdgexList, edgexInfo)
 	}
 }
