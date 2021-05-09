@@ -15,29 +15,33 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-// RegisterParams ...
-type RegisterParams_v2 struct {
+// RegisterParamsV2 ...
+type RegisterParamsV2 struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
 	Email    string `form:"email" json:"email"`
 }
 
-type RegisterCheckParams_v2 struct {
+// RegisterCheckParamsV2 ...
+type RegisterCheckParamsV2 struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
 	Email    string `form:"email" json:"email"`
 	Code     string `form:"code" json:"code" binding:"required"`
 }
-type CodeChecker_v2 struct {
+
+// CodeCheckerV2 ...
+type CodeCheckerV2 struct {
 	Email string
 	Code  string
 }
 
-var checker map[string]CodeChecker_v2
+var checker map[string]CodeCheckerV2
 
-func Register_v2(c *gin.Context) *resp.JSONOutput {
+// RegisterV2 ...
+func RegisterV2(c *gin.Context) *resp.JSONOutput {
 	// Step1. 参数校验
-	params := &RegisterParams_v2{}
+	params := &RegisterParamsV2{}
 	err := c.Bind(&params)
 	if err != nil {
 		logs.Error("[Register] request-params error: params=%+v, err=%v", params, err)
@@ -63,30 +67,31 @@ func Register_v2(c *gin.Context) *resp.JSONOutput {
 	subject := string("登录验证")
 	code := randomCode()
 	body := code
-	err = SendMailTo_v2(mailTo, subject, body)
+	err = SendMailToV2(mailTo, subject, body)
 	if err != nil {
 		return resp.SampleJSON(c, resp.RespCodeParamsError, "发送失败")
 	}
 
 	if checker == nil {
-		checker = make(map[string]CodeChecker_v2)
+		checker = make(map[string]CodeCheckerV2)
 	}
-	var cc CodeChecker_v2
+	var cc CodeCheckerV2
 	cc.Email = params.Email
 	cc.Code = code
 	checker[params.Email] = cc
 	return resp.SampleJSON(c, resp.RespCodeSuccess, nil)
 }
 
-func RegisterCheck_v2(c *gin.Context) *resp.JSONOutput {
-	params := &RegisterCheckParams_v2{}
+// RegisterCheckV2 ...
+func RegisterCheckV2(c *gin.Context) *resp.JSONOutput {
+	params := &RegisterCheckParamsV2{}
 	err := c.Bind(&params)
 	if err != nil {
 		logs.Error("[RegisterCheck] request-params error: params=%+v, err=%v", params, err)
 		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 	//验证验证码
-	err = checkCode_v2(params.Email, params.Code)
+	err = checkCodeV2(params.Email, params.Code)
 	if err != nil {
 		logs.Error("[RegisterCheck] check-code error: params=%+v, err=%v", params, err)
 		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
@@ -110,7 +115,7 @@ type MailParam struct {
 	Email string `form:"email" json:"email" binding:"required"`
 }
 
-func SendMailTo_v2(mailTo []string, subject string, body string) error {
+func SendMailToV2(mailTo []string, subject string, body string) error {
 	//定义邮箱服务器连接信息，如果是网易邮箱 pass填密码，qq邮箱填授权码
 
 	//mailConn := map[string]string{
@@ -145,7 +150,7 @@ func SendMailTo_v2(mailTo []string, subject string, body string) error {
 
 }
 
-func SendMail_v2(c *gin.Context) *resp.JSONOutput {
+func SendMailV2(c *gin.Context) *resp.JSONOutput {
 	params := &MailParam{}
 	err := c.Bind(&params)
 	if err != nil {
@@ -156,7 +161,7 @@ func SendMail_v2(c *gin.Context) *resp.JSONOutput {
 	subject := string("登录验证")
 	code := randomCode()
 	body := code
-	err = SendMailTo_v2(mailTo, subject, body)
+	err = SendMailToV2(mailTo, subject, body)
 	if err != nil {
 		return resp.SampleJSON(c, resp.RespCodeParamsError, "发送失败")
 	}
@@ -169,9 +174,9 @@ func randomCode() string {
 	return vcode
 }
 
-func checkCode_v2(email string, code string) error {
+func checkCodeV2(email string, code string) error {
 	if checker == nil {
-		checker = make(map[string]CodeChecker_v2)
+		checker = make(map[string]CodeCheckerV2)
 		return errors.New("no email found")
 	}
 	c, ok := checker[email]
@@ -194,9 +199,9 @@ func checkCode_v2(email string, code string) error {
 // 	return err
 // }
 
-func updatePassword_v2(user_id int64, password string) error {
+func updatePasswordV2(userID int64, password string) error {
 	var fieldsMap map[string]interface{} = map[string]interface{}{"password": password}
-	err := dal.UpdateEdgexUser(user_id, fieldsMap)
+	err := dal.UpdateEdgexUser(userID, fieldsMap)
 	return err
 }
 
@@ -207,7 +212,7 @@ func updatePassword_v2(user_id int64, password string) error {
 // }
 
 type PasswordParams struct {
-	UserId   int64  `form:"user_id" json:"user_id"`
+	UserID   int64  `form:"user_id" json:"user_id"`
 	Password string `form:"password" json:"password"`
 }
 
@@ -226,7 +231,7 @@ type PasswordParams struct {
 // 	return resp.SampleJSON(c, resp.RespCodeSuccess, nil)
 // }
 
-func UpdateUserPassword_v2(c *gin.Context) *resp.JSONOutput {
+func UpdateUserPasswordV2(c *gin.Context) *resp.JSONOutput {
 	params := &PasswordParams{}
 	err := c.Bind(&params)
 	if err != nil {
@@ -234,7 +239,7 @@ func UpdateUserPassword_v2(c *gin.Context) *resp.JSONOutput {
 		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 	password := params.Password
-	if updatePassword_v2(params.UserId, password) != nil {
+	if updatePasswordV2(params.UserID, password) != nil {
 		return resp.SampleJSON(c, resp.RespCodeParamsError, "更新失败")
 	}
 	return resp.SampleJSON(c, resp.RespCodeSuccess, nil)
