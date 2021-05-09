@@ -34,8 +34,8 @@ func EnableRedisSession() gin.HandlerFunc {
 	return sessions.Sessions("session_token", store)
 }
 
-// SessionMiddleware ...
-func SessionMiddleware() gin.HandlerFunc {
+// MiddlewareSession ...
+func MiddlewareSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sessionID, _ := c.Cookie(CookieName)
 		if sessionID == "" {

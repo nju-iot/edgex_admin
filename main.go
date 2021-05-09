@@ -32,11 +32,11 @@ func main() {
 	r.Use(ginzap.RecoveryWithZap(zap.L(), true))
 
 	// 允许跨域访问
-	r.Use(cors.CorsMiddleware())
+	r.Use(cors.MiddlewareCors())
 
 	// session中间件
 	r.Use(session.EnableRedisSession())
-	r.Use(session.SessionMiddleware())
+	r.Use(session.MiddlewareSession())
 
 	registerRouter(r)
 

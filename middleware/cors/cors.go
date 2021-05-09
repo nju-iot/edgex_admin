@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CorsMiddleware() gin.HandlerFunc {
+// MiddlewareCors ...
+func MiddlewareCors() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		method := c.Request.Method
@@ -21,6 +22,7 @@ func CorsMiddleware() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Credentials", "true")
 		if method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
+			return
 		}
 		c.Next()
 	}
