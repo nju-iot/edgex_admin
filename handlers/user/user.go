@@ -298,7 +298,7 @@ func UpdateUserPassword(c *gin.Context) *resp.JSONOutput {
 		return resp.SampleJSON(c, resp.RespCodeParamsError, nil)
 	}
 	password := params.Password
-	if updateEntrypted(params.UserName, password) != nil {
+	if updatePassword(params.UserName, password) != nil {
 		return resp.SampleJSON(c, resp.RespCodeParamsError, "更新失败")
 	}
 	return resp.SampleJSON(c, resp.RespCodeSuccess, nil)
