@@ -107,7 +107,7 @@ func Register(c *gin.Context) *resp.JSONOutput {
 		return resp.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
 	if dbErr2 != nil {
-		logs.Error("[Register] email [%s] already exists: err=%v", dbErr2)
+		logs.Error("[Register] email [%s] already exists: err=%v", params.Email, dbErr2)
 	}
 	if userInfo != nil && mailInfo != nil {
 		return resp.SampleJSON(c, resp.RespCodeUserExsit, nil)
