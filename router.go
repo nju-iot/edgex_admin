@@ -27,15 +27,11 @@ func registerRouter(r *gin.Engine) {
 		userRouter.POST("/register", resp.JSONOutPutWrapper(user.Register))
 		userRouter.POST("/login", resp.JSONOutPutWrapper(user.Login))
 		userRouter.GET("/logout", resp.JSONOutPutWrapper(user.Logout))
-	}
-}
 
-func registerRouter_v2(r *gin.Engine) {
-	userRouter_v2 := r.Group("/edgex_admin/user")
-	{
-		userRouter_v2.POST("/register_v2", resp.JSONOutPutWrapper(user.Register_v2))
-		userRouter_v2.POST("/test/email_v2", resp.JSONOutPutWrapper(user.SendMail_v2))
-		userRouter_v2.POST("/registerCheck_v2", resp.JSONOutPutWrapper(user.RegisterCheck_v2))
-		userRouter_v2.POST("/update/password_v2", resp.JSONOutPutWrapper(user.UpdateUserPassword_v2))
+		// 新版注册
+		userRouter.POST("/registerV2", resp.JSONOutPutWrapper(user.RegisterV2))
+		userRouter.POST("/test/emailV2", resp.JSONOutPutWrapper(user.SendMailV2))
+		userRouter.POST("/registerCheckV2", resp.JSONOutPutWrapper(user.RegisterCheckV2))
+		userRouter.POST("/update/passwordV2", resp.JSONOutPutWrapper(user.UpdateUserPasswordV2))
 	}
 }
