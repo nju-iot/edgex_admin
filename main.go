@@ -39,5 +39,6 @@ func main() {
 	r.Use(session.MiddlewareSession())
 
 	registerRouter(r)
+
 	_ = r.Run(config.Server.Port)
 }
