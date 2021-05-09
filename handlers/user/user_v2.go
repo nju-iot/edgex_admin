@@ -49,16 +49,16 @@ func RegisterV2(c *gin.Context) *resp.JSONOutput {
 	}
 
 	// Step2. 查看用户/邮箱是否存在
-	userInfo, dbErr := dal.GetEdgexUserByName(params.Username)
-	mailInfo, dbErr2 := dal.GetEdgexUserByEmail(params.Email)
+	userInfo, dbErr := dal.GetEdgexUserByNameAndEmail(params.Username, params.Email)
+	// mailInfo, dbErr2 := dal.GetEdgexUserByEmail(params.Email)
 	if dbErr != nil {
 		logs.Error("[Register] get user failed: username=%s, err=%v", params.Username, dbErr)
 		return resp.SampleJSON(c, resp.RespDatabaseError, nil)
 	}
-	if dbErr2 != nil {
-		logs.Error("[Register] email [%s] already exists: err=%v", params.Email, dbErr2)
-	}
-	if userInfo != nil && mailInfo != nil {
+	// if dbErr2 != nil {
+	// 	logs.Error("[Register] email [%s] already exists: err=%v", params.Email, dbErr2)
+	// }
+	if userInfo != nil {
 		return resp.SampleJSON(c, resp.RespCodeUserExsit, nil)
 	}
 

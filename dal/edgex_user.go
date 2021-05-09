@@ -62,9 +62,9 @@ func GetEdgexUserByID(id int64) (user *EdgexUser, err error) {
 }
 
 // GetEdgexUserByEmail ...
-func GetEdgexUserByEmail(email string) (user *EdgexUser, err error) {
+func GetEdgexUserByNameAndEmail(username string, email string) (user *EdgexUser, err error) {
 	userList := make([]*EdgexUser, 0)
-	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("email = ?", email).Find(&userList)
+	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("username = ? and email = ?", username, email).Find(&userList)
 	if dbRes.Error != nil {
 		err = dbRes.Error
 		logs.Error("[GetEdgexUserByEmail] get edgex user failed: email=%v, err=%v", email, err)
