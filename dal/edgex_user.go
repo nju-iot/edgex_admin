@@ -60,3 +60,22 @@ func GetEdgexUserByID(id int64) (user *EdgexUser, err error) {
 	}
 	return
 }
+
+// MGetEdgexUserMapByIDs ...
+func MGetEdgexUserMapByIDs(ids []int64) (userMap map[int64]*EdgexUser, err error) {
+	userMap = make(map[int64]*EdgexUser)
+	if len(ids) == 0 {
+		return
+	}
+	userList := make([]*EdgexUser, 0)
+	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("id IN (?)", ids).Find(&userList)
+	if dbRes.Error != nil {
+		err = dbRes.Error
+		logs.Error("[GetEdgexUserByID] get edgex user failed: userIDs=%v, err=%v", ids, err)
+		return
+	}
+	for _, user := range userList {
+		userMap[user.ID] = user
+	}
+	return
+}
