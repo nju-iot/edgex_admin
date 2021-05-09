@@ -205,7 +205,6 @@ func SendMailTo(mailTo []string, subject string, body string) error {
 	d := gomail.NewDialer(mailConn["host"], port, mailConn["user"], mailConn["pass"])
 
 	err := d.DialAndSend(m)
-	fmt.Printf("%s", err)
 	return err
 
 }
@@ -249,9 +248,9 @@ func checkCode(email string, code string) error {
 	return errors.New("wrong code")
 }
 
-func setEntryptedQuestions(questionCode int, user_id int64, answer string) {
+// func setEntryptedQuestions(questionCode int, user_id int64, answer string) {
 
-}
+// }
 
 func updateEntrypted(user_name string, entrypted string) error {
 	var fieldsMap map[string]interface{} = map[string]interface{}{"entrypted": entrypted}
@@ -259,7 +258,7 @@ func updateEntrypted(user_name string, entrypted string) error {
 	return err
 }
 
-func updateassword(user_name string, password string) error {
+func updatePassword(user_name string, password string) error {
 	var fieldsMap map[string]interface{} = map[string]interface{}{"password": password}
 	err := dal.UpdateEdgexUser(user_name, fieldsMap)
 	return err
