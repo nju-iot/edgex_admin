@@ -16,6 +16,7 @@ type EdgexUser struct {
 	PhoneNumber  string    `gorm:"column:phone_number" json:"phone_number"`
 	Email        string    `gorm:"column:email" json:"email"`
 	Deleted      int32     `gorm:"column:deleted" json:"deleted"`
+	Entrypted    string    `gorm:"column:entrypted" json:"entrypted"`
 	CreatedTime  time.Time `gorm:"column:created_time" json:"created_time"`
 	ModifiedTime time.Time `gorm:"column:modified_time" json:"modified_time"`
 }
@@ -61,21 +62,26 @@ func GetEdgexUserByID(id int64) (user *EdgexUser, err error) {
 	return
 }
 
-// MGetEdgexUserMapByIDs ...
-func MGetEdgexUserMapByIDs(ids []int64) (userMap map[int64]*EdgexUser, err error) {
-	userMap = make(map[int64]*EdgexUser)
-	if len(ids) == 0 {
-		return
-	}
+// GetEdgexUserByMail ...
+func GetEdgexUserByEmail(email string) (user *EdgexUser, err error) {
 	userList := make([]*EdgexUser, 0)
-	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("id IN (?)", ids).Find(&userList)
+	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("email = ?", email).Find(&userList)
 	if dbRes.Error != nil {
 		err = dbRes.Error
-		logs.Error("[GetEdgexUserByID] get edgex user failed: userIDs=%v, err=%v", ids, err)
+		logs.Error("[GetEdgexUserByEmail] get edgex user failed: email=%v, err=%v", email, err)
 		return
 	}
-	for _, user := range userList {
-		userMap[user.ID] = user
+	if len(userList) > 0 {
+		user = userList[0]
 	}
 	return
+}
+
+func UpdateEdgexUser(user_name string, fieldsMap map[string]interface{}) error {
+	dbRes := caller.EdgexDB.Debug().Model(&EdgexUser{}).Where("username = ?", user_name).Updates(fieldsMap)
+	if dbRes.Error != nil {
+		logs.Error("[UpdateEdgexRelatedUser] update EdgexRelatedUser failed: username=%+v, filedsMap=%+v, err=%v", user_name, fieldsMap, dbRes.Error)
+		return dbRes.Error
+	}
+	return nil
 }

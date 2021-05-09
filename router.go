@@ -25,7 +25,12 @@ func registerRouter(r *gin.Engine) {
 	userRouter := r.Group("/edgex_admin/user")
 	{
 		userRouter.POST("/register", resp.JSONOutPutWrapper(user.Register))
-		userRouter.POST("/login", resp.JSONOutPutWrapper(user.Login))
+		userRouter.POST("/login", session.MiddlewareSession(), resp.JSONOutPutWrapper(user.Login))
 		userRouter.GET("/logout", resp.JSONOutPutWrapper(user.Logout))
+		userRouter.POST("/test/email", resp.JSONOutPutWrapper(user.SendMail))
+		userRouter.POST("/registerCheck", resp.JSONOutPutWrapper(user.RegisterCheck))
+		userRouter.POST("/update/entrypted", resp.JSONOutPutWrapper(user.UpdateUserEntrypted))
+		userRouter.POST("/update/password", resp.JSONOutPutWrapper(user.UpdateUserPassword))
+		userRouter.POST("/entryptedcheck", resp.JSONOutPutWrapper(user.CheckUserEntrypted))
 	}
 }
